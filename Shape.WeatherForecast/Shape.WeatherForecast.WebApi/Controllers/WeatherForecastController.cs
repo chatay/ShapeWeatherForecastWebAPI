@@ -4,6 +4,8 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using Shape.WeatherForecast.Application.DTOs.OpenWeatherMap;
+using Shape.WeatherForecast.Application.Interfaces;
+using Shape.WeatherForecast.Application.Wrappers;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -22,24 +24,20 @@ namespace Shape.WeatherForecast.WebApi.Controllers
         private readonly ILogger<WeatherForecastController> _logger;
         private readonly HttpClient _httpClient;
         private readonly IOptions<OpenWeatherMapSettings> _config;
+        private readonly IWeatherForecastService _weatherForecastService;
 
-        public WeatherForecastController(ILogger<WeatherForecastController> logger, HttpClient httpClient, IOptions<OpenWeatherMapSettings> config)
+        public WeatherForecastController(ILogger<WeatherForecastController> logger, HttpClient httpClient, IOptions<OpenWeatherMapSettings> config, IWeatherForecastService weatherForecastService)
         {
             _logger = logger;
             _httpClient = httpClient;
             _config = config;
+            _weatherForecastService = weatherForecastService;
         }
 
-        [HttpGet(Name = "GetListOfTemperatures")]
-        public async Task<ListOfTempFiveDaysResponse> Get([FromQuery] string city)
+        [HttpGet(Name = "GetListOfTemperaturesForCity")]
+        public async Task<IActionResult> GetListOfTemperatures([FromQuery] string city)
         {
-            var weatherForecastapiKey = _config.Value;
-
-            var query = $"https://api.openweathermap.org/data/2.5/weather?q=London,uk&APPID={weatherForecastapiKey.ServiceApiKey}";
-
-            var response = await _httpClient.GetFromJsonAsync<ListOfTempFiveDaysResponse>(query);
-
-            return response;
+            return Ok(await _weatherForecastService.GetListOfTemperaturesForCity(city));
         }
     }
 }

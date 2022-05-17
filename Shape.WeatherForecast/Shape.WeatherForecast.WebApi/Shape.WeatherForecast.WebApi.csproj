@@ -12,6 +12,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Shape.WeatherForecast.Application\Shape.WeatherForecast.Application.csproj" />
+    <ProjectReference Include="..\Shape.WeatherForecast.Infrastructure.Shared\Shape.WeatherForecast.Infrastructure.Shared.csproj" />
   </ItemGroup>
 
 </Project>

@@ -11,6 +11,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Shape.WeatherForecast.Infrastructure.Shared;
 
 namespace Shape.WeatherForecast.WebApi
 {
@@ -29,6 +30,7 @@ namespace Shape.WeatherForecast.WebApi
             services.Configure<OpenWeatherMapSettings>(Configuration.GetSection("OpenWeatherMapSettings"));
             services.AddHttpClient();
             services.AddControllers();
+            services.AddSharedInfrastructure();
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "Shape.WeatherForecast.WebApi", Version = "v1" });
