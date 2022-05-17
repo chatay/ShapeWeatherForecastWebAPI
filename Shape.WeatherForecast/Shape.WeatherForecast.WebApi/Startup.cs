@@ -6,6 +6,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
+using Shape.WeatherForecast.Application.DTOs.OpenWeatherMap;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -25,6 +26,7 @@ namespace Shape.WeatherForecast.WebApi
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.Configure<OpenWeatherMapSettings>(Configuration.GetSection("OpenWeatherMapSettings"));
             services.AddHttpClient();
             services.AddControllers();
             services.AddSwaggerGen(c =>
