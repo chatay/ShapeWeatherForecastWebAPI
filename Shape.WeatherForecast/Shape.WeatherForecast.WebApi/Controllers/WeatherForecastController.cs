@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -19,19 +20,11 @@ namespace Shape.WeatherForecast.WebApi.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    public class WeatherForecastController : ControllerBase
+    public class WeatherForecastController : BaseController
     {
-        private readonly ILogger<WeatherForecastController> _logger;
-        private readonly HttpClient _httpClient;
-        private readonly IOptions<OpenWeatherMapSettings> _config;
-        private readonly IWeatherForecastService _weatherForecastService;
-
-        public WeatherForecastController(ILogger<WeatherForecastController> logger, HttpClient httpClient, IOptions<OpenWeatherMapSettings> config, IWeatherForecastService weatherForecastService)
+        public WeatherForecastController(ILogger<WeatherForecastController> logger, HttpClient httpClient, IOptions<OpenWeatherMapSettings> config, 
+            IWeatherForecastService weatherForecastService):base(logger, httpClient, config, weatherForecastService)
         {
-            _logger = logger;
-            _httpClient = httpClient;
-            _config = config;
-            _weatherForecastService = weatherForecastService;
         }
 
         [HttpGet(Name = "GetListOfTemperaturesForCity")]

@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Caching.Distributed;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Shape.WeatherForecast.Application.DTOs.OpenWeatherMap;
 using Shape.WeatherForecast.Application.Interfaces;
@@ -9,31 +10,40 @@ using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Json;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace Shape.WeatherForecast.Infrastructure.Shared.Services
 {
-    public class WeatherForecastService : IWeatherForecastService
+    public class WeatherForecastService : BaseService, IWeatherForecastService
     {
-        private readonly ILogger<WeatherForecastService> _logger;
-        private readonly HttpClient _httpClient;
-        private readonly IOptions<OpenWeatherMapSettings> _config;
 
-        public WeatherForecastService(ILogger<WeatherForecastService> logger, HttpClient httpClient, IOptions<OpenWeatherMapSettings> config)
+        public WeatherForecastService(ILogger<WeatherForecastService> logger, HttpClient httpClient, IOptions<OpenWeatherMapSettings> config, IDistributedCache _distributedCache) : base(logger, httpClient, config, _distributedCache)
         {
-            _logger = logger;
-            _httpClient = httpClient;
-            _config = config;
         }
         public async Task<Response<ListOfTempFiveDaysResponse>> GetListOfTemperaturesForCity(string city)
         {
+            DistributedCacheEntryOptions options = new DistributedCacheEntryOptions();
             var weatherForecastapiKey = _config.Value;
+            string redisJson;
+            var query = $"https://api.openweathermap.org/data/2.5/forecast?q={city}&APPID={weatherForecastapiKey.ServiceApiKey}&cnt=5";
 
-            var query = $"https://api.openweathermap.org/data/2.5/weather?q=London,uk&APPID={weatherForecastapiKey.ServiceApiKey}";
+            //var response = await _httpClient.GetFromJsonAsync<ListOfTempFiveDaysResponse>(query);
 
-            var response = await _httpClient.GetFromJsonAsync<ListOfTempFiveDaysResponse>(query);
+            var keyName = $"forecast:{city}";
+            redisJson = await _distributedCache.GetStringAsync(keyName);
+            if (string.IsNullOrEmpty(redisJson))
+            {
+                var response = await _httpClient.GetFromJsonAsync<ListOfTempFiveDaysResponse>(query);
+                redisJson = JsonSerializer.Serialize(response);
+                var setTask = _distributedCache.SetStringAsync(keyName, redisJson, new DistributedCacheEntryOptions{ AbsoluteExpiration = DateTime.Now.AddHours(1) });
+                await Task.WhenAll(setTask);
+            }
 
-            return new Response<ListOfTempFiveDaysResponse>(response);
+            var forecast =
+                    JsonSerializer.Deserialize<ListOfTempFiveDaysResponse>(redisJson);
+
+            return new Response<ListOfTempFiveDaysResponse>(forecast);
         }
     }
 }

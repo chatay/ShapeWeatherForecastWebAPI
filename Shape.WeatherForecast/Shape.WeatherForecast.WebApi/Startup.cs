@@ -35,6 +35,10 @@ namespace Shape.WeatherForecast.WebApi
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "Shape.WeatherForecast.WebApi", Version = "v1" });
             });
+            services.AddStackExchangeRedisCache(options => {
+                options.Configuration = "localhost:6380";
+
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
