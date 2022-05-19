@@ -10,6 +10,6 @@ namespace Shape.WeatherForecast.Application.Interfaces
 {
     public interface IWeatherForecastService
     {
-        Task<Response<ListOfTempFiveDaysResponse>> GetListOfTemperaturesForCity(string city);
+        Task<Response<ListOfTempFiveDaysResponse>> GetListOfTemperaturesForCity(ListOfTempFiveDaysRequest _request);
     }
 }

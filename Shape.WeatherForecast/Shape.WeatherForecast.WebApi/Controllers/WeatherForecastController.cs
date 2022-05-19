@@ -28,9 +28,9 @@ namespace Shape.WeatherForecast.WebApi.Controllers
         }
 
         [HttpGet(Name = "GetListOfTemperaturesForCity")]
-        public async Task<IActionResult> GetListOfTemperatures([FromQuery] string city)
+        public async Task<IActionResult> GetListOfTemperatures([FromQuery] ListOfTempFiveDaysRequest _request)
         {
-            return Ok(await _weatherForecastService.GetListOfTemperaturesForCity(city));
+            return Ok(await _weatherForecastService.GetListOfTemperaturesForCity(_request));
         }
     }
 }

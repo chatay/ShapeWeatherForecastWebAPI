@@ -1,9 +1,12 @@
-﻿using Microsoft.Extensions.Caching.Distributed;
+﻿using FluentValidation;
+using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Shape.WeatherForecast.Application.DTOs.OpenWeatherMap;
 using Shape.WeatherForecast.Application.Interfaces;
 using Shape.WeatherForecast.Application.Wrappers;
+using Shape.WeatherForecast.Business.ExceptionRules;
+using Shape.WeatherForecast.Business.Validation.FluentValidation;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,16 +24,21 @@ namespace Shape.WeatherForecast.Infrastructure.Shared.Services
         public WeatherForecastService(ILogger<WeatherForecastService> logger, HttpClient httpClient, IOptions<OpenWeatherMapSettings> config, IDistributedCache _distributedCache) : base(logger, httpClient, config, _distributedCache)
         {
         }
-        public async Task<Response<ListOfTempFiveDaysResponse>> GetListOfTemperaturesForCity(string city)
+        public async Task<Response<ListOfTempFiveDaysResponse>> GetListOfTemperaturesForCity(ListOfTempFiveDaysRequest _request)
         {
+            WeatherForecastValidator fiveDaysTempratureValidator = new WeatherForecastValidator();
+            var result = fiveDaysTempratureValidator.Validate(_request);
+            if (!result.IsValid)
+            {
+                throw new CustomFluentValidationExceptions(result.Errors);
+            }
+
             DistributedCacheEntryOptions options = new DistributedCacheEntryOptions();
             var weatherForecastapiKey = _config.Value;
             string redisJson;
-            var query = $"https://api.openweathermap.org/data/2.5/forecast?q={city}&APPID={weatherForecastapiKey.ServiceApiKey}&cnt=5";
+            var query = $"https://api.openweathermap.org/data/2.5/forecast?q={_request.City}&APPID={weatherForecastapiKey.ServiceApiKey}&cnt=5";
 
-            //var response = await _httpClient.GetFromJsonAsync<ListOfTempFiveDaysResponse>(query);
-
-            var keyName = $"forecast:{city}";
+            var keyName = $"forecast:{_request.City}";
             redisJson = await _distributedCache.GetStringAsync(keyName);
             if (string.IsNullOrEmpty(redisJson))
             {
