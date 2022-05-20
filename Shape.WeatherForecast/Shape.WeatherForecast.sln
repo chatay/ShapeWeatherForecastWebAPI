@@ -21,6 +21,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Business", "Business", "{32
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Shape.WeatherForecast.Business", "Shape.WeatherForecast.Business\Shape.WeatherForecast.Business.csproj", "{7789F0C5-2EC0-415A-9AF2-C135E653BF1C}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Shape.WeatherForecast.Core", "Shape.WeatherForecast.Core\Shape.WeatherForecast.Core.csproj", "{F50730BC-10D9-4490-B650-C88A917B4AF0}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -43,6 +45,10 @@ Global
 		{7789F0C5-2EC0-415A-9AF2-C135E653BF1C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7789F0C5-2EC0-415A-9AF2-C135E653BF1C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7789F0C5-2EC0-415A-9AF2-C135E653BF1C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F50730BC-10D9-4490-B650-C88A917B4AF0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F50730BC-10D9-4490-B650-C88A917B4AF0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F50730BC-10D9-4490-B650-C88A917B4AF0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F50730BC-10D9-4490-B650-C88A917B4AF0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -56,6 +62,7 @@ Global
 		{BA4F7CB7-2F78-4F9F-B120-080A5B7A005E} = {421AF28E-9AE6-47A3-B305-B50E7B11A3F6}
 		{32BFF0A1-07D3-4538-A293-2342A9DFA0FF} = {13341E18-16BC-4BB5-A4DA-D2B43B1B8642}
 		{7789F0C5-2EC0-415A-9AF2-C135E653BF1C} = {32BFF0A1-07D3-4538-A293-2342A9DFA0FF}
+		{F50730BC-10D9-4490-B650-C88A917B4AF0} = {CB7F882C-A029-4C46-8600-6B07E61DFA65}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {7DD552C4-B53B-4304-B0CA-97E22AF017A5}

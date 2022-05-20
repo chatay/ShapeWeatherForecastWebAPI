@@ -1,5 +1,6 @@
 ﻿using Shape.WeatherForecast.Application.DTOs.OpenWeatherMap;
 using Shape.WeatherForecast.Application.Wrappers;
+using Shape.WeatherForecast.Core.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,6 +11,7 @@ namespace Shape.WeatherForecast.Application.Interfaces
 {
     public interface IWeatherForecastService
     {
-        Task<Response<ListOfTempFiveDaysResponse>> GetListOfTemperaturesForCity(ListOfTempFiveDaysRequest _request);
+        Task<ListOfTempFiveDaysResponse> GetListOfTemperaturesForCity(ListOfTempFiveDaysRequest _request, RequestOptions requestOptions = default);
+        //Task<Response<ListOfTempFiveDaysResponse>> GetUserFavoriteLocationsTemp(ListOfTempFiveDaysRequest _request);
     }
 }

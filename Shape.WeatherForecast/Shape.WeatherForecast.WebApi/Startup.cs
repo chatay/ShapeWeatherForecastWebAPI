@@ -12,6 +12,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Shape.WeatherForecast.Infrastructure.Shared;
+using Shape.WeatherForecast.Core.Utilities;
 
 namespace Shape.WeatherForecast.WebApi
 {
@@ -38,6 +39,10 @@ namespace Shape.WeatherForecast.WebApi
             services.AddStackExchangeRedisCache(options => {
                 options.Configuration = "localhost:6380";
 
+            });
+            services.AddSingleton(new OpenWeatherMapOptions
+            {
+                ApiKey = Configuration["OpenWeatherMapSettings:ServiceApiKey"]
             });
         }
 

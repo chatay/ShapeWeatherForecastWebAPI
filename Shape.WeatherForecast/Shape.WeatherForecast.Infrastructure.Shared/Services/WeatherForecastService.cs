@@ -7,8 +7,10 @@ using Shape.WeatherForecast.Application.Interfaces;
 using Shape.WeatherForecast.Application.Wrappers;
 using Shape.WeatherForecast.Business.ExceptionRules;
 using Shape.WeatherForecast.Business.Validation.FluentValidation;
+using Shape.WeatherForecast.Core.Utilities;
 using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Json;
@@ -18,13 +20,14 @@ using System.Threading.Tasks;
 
 namespace Shape.WeatherForecast.Infrastructure.Shared.Services
 {
-    public class WeatherForecastService : BaseService, IWeatherForecastService
+    public class WeatherForecastService : BaseService<WeatherForecastService>, IWeatherForecastService
     {
-
-        public WeatherForecastService(ILogger<WeatherForecastService> logger, HttpClient httpClient, IOptions<OpenWeatherMapSettings> config, IDistributedCache _distributedCache) : base(logger, httpClient, config, _distributedCache)
+        private readonly OpenWeatherMapOptions _options;
+        public WeatherForecastService(ILogger<WeatherForecastService> logger, HttpClient httpClient, IOptions<OpenWeatherMapSettings> config, IDistributedCache _distributedCache, IOpenWeatherMapService _openWeatherMapService, OpenWeatherMapOptions options) : base(logger, httpClient, config, _distributedCache, _openWeatherMapService)
         {
+            _options = options;
         }
-        public async Task<Response<ListOfTempFiveDaysResponse>> GetListOfTemperaturesForCity(ListOfTempFiveDaysRequest _request)
+        public async Task<ListOfTempFiveDaysResponse> GetListOfTemperaturesForCity(ListOfTempFiveDaysRequest _request, RequestOptions requestOptions = default)
         {
             WeatherForecastValidator fiveDaysTempratureValidator = new WeatherForecastValidator();
             var result = fiveDaysTempratureValidator.Validate(_request);
@@ -33,25 +36,17 @@ namespace Shape.WeatherForecast.Infrastructure.Shared.Services
                 throw new CustomFluentValidationExceptions(result.Errors);
             }
 
-            DistributedCacheEntryOptions options = new DistributedCacheEntryOptions();
-            var weatherForecastapiKey = _config.Value;
-            string redisJson;
-            var query = $"https://api.openweathermap.org/data/2.5/forecast?q={_request.City}&APPID={weatherForecastapiKey.ServiceApiKey}&cnt=5";
+            requestOptions ??= RequestOptions.Default;
+            requestOptions.CancellationToken.ThrowIfCancellationRequested();
 
-            var keyName = $"forecast:{_request.City}";
-            redisJson = await _distributedCache.GetStringAsync(keyName);
-            if (string.IsNullOrEmpty(redisJson))
-            {
-                var response = await _httpClient.GetFromJsonAsync<ListOfTempFiveDaysResponse>(query);
-                redisJson = JsonSerializer.Serialize(response);
-                var setTask = _distributedCache.SetStringAsync(keyName, redisJson, new DistributedCacheEntryOptions{ AbsoluteExpiration = DateTime.Now.AddHours(1) });
-                await Task.WhenAll(setTask);
-            }
 
-            var forecast =
-                    JsonSerializer.Deserialize<ListOfTempFiveDaysResponse>(redisJson);
-
-            return new Response<ListOfTempFiveDaysResponse>(forecast);
+            var parameters = new NameValueCollection { { "q", _request.City } };
+            return await _openWeatherMapService.RequestAsync<ListOfTempFiveDaysResponse>("forecast", parameters, requestOptions); ;
         }
+
+        //public Task<Response<ListOfTempFiveDaysResponse>> GetUserFavoriteLocationsTemp(ListOfTempFiveDaysRequest _request)
+        //{
+        //    throw new NotImplementedException();
+        //}
     }
 }

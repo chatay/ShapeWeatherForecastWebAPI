@@ -12,19 +12,20 @@ using System.Threading.Tasks;
 
 namespace Shape.WeatherForecast.Infrastructure.Shared.Services
 {
-    public class BaseService
+    public class BaseService<TEntity>
     {
-        protected readonly ILogger<BaseService> _logger;
+        protected readonly ILogger<TEntity> _logger;
         protected readonly HttpClient _httpClient;
         protected readonly IOptions<OpenWeatherMapSettings> _config;
         protected IDistributedCache _distributedCache;
-
-        public BaseService(ILogger<BaseService> logger, HttpClient httpClient, IOptions<OpenWeatherMapSettings> config, IDistributedCache distributedCache)
+        protected IOpenWeatherMapService _openWeatherMapService;
+        public BaseService(ILogger<TEntity> logger, HttpClient httpClient, IOptions<OpenWeatherMapSettings> config, IDistributedCache distributedCache = null, IOpenWeatherMapService openWeatherMapService = null)
         {
             _logger = logger;
             _httpClient = httpClient;
             _config = config;
             _distributedCache = distributedCache;
+            _openWeatherMapService = openWeatherMapService;
         }
     }
 }

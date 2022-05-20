@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Shape.WeatherForecast.Business.Extensions
+namespace Shape.WeatherForecast.Business.Extensions  
 {
     public static class RuleBuilderExtensions
     {

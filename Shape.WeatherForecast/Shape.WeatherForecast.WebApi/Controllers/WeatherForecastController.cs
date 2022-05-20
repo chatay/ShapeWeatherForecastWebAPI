@@ -30,7 +30,13 @@ namespace Shape.WeatherForecast.WebApi.Controllers
         [HttpGet(Name = "GetListOfTemperaturesForCity")]
         public async Task<IActionResult> GetListOfTemperatures([FromQuery] ListOfTempFiveDaysRequest _request)
         {
-            return Ok(await _weatherForecastService.GetListOfTemperaturesForCity(_request));
+            return Ok(await _weatherForecastService.GetListOfTemperaturesForCity(_request, new Core.Utilities.RequestOptions { Unit = Core.Utilities.UnitType.Metric, Language = "en", Count = 5}));
         }
+
+        //[HttpGet(Name = "GetUserFavoriteLocationsTemp")]
+        //public async Task<IActionResult> GetUserFavoriteLocationsTemp([FromQuery] ListOfTempFiveDaysRequest _request)
+        //{
+        //    return Ok(await _weatherForecastService.GetListOfTemperaturesForCity(_request));
+        //}
     }
 }
