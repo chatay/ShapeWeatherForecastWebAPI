@@ -19,7 +19,7 @@ using System.Threading.Tasks;
 namespace Shape.WeatherForecast.WebApi.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
+    [Route("api/[controller]/[action]")]
     public class WeatherForecastController : BaseController
     {
         public WeatherForecastController(ILogger<WeatherForecastController> logger, HttpClient httpClient, IOptions<OpenWeatherMapSettings> config, 
@@ -30,13 +30,13 @@ namespace Shape.WeatherForecast.WebApi.Controllers
         [HttpGet(Name = "GetListOfTemperaturesForCity")]
         public async Task<IActionResult> GetListOfTemperatures([FromQuery] ListOfTempFiveDaysRequest _request)
         {
-            return Ok(await _weatherForecastService.GetListOfTemperaturesForCity(_request, new Core.Utilities.RequestOptions { Unit = Core.Utilities.UnitType.Metric, Language = "en", Count = 5}));
+            return Ok(await _weatherForecastService.GetListOfTemperaturesForCityAsync(_request, new Core.Utilities.RequestOptions { Unit = Core.Utilities.UnitType.Metric, Language = "en", Count = 5}));
         }
 
-        //[HttpGet(Name = "GetUserFavoriteLocationsTemp")]
-        //public async Task<IActionResult> GetUserFavoriteLocationsTemp([FromQuery] ListOfTempFiveDaysRequest _request)
-        //{
-        //    return Ok(await _weatherForecastService.GetListOfTemperaturesForCity(_request));
-        //}
+        [HttpPost(Name = "GetUserFavoriteLocationsTemp")]
+        public async Task<IActionResult> GetUserFavoriteLocationsTemp([FromBody] IEnumerable<int> cityIds)
+        {
+            return Ok(await _weatherForecastService.GetUserFavoriteLocationsTempAsync(cityIds));
+        }
     }
 }

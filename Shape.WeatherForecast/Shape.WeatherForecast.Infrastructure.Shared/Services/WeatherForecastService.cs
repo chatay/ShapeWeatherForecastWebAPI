@@ -27,7 +27,7 @@ namespace Shape.WeatherForecast.Infrastructure.Shared.Services
         {
             _options = options;
         }
-        public async Task<ListOfTempFiveDaysResponse> GetListOfTemperaturesForCity(ListOfTempFiveDaysRequest _request, RequestOptions requestOptions = default)
+        public async Task<ListOfTempFiveDaysResponse> GetListOfTemperaturesForCityAsync(ListOfTempFiveDaysRequest _request, RequestOptions requestOptions = default)
         {
             WeatherForecastValidator fiveDaysTempratureValidator = new WeatherForecastValidator();
             var result = fiveDaysTempratureValidator.Validate(_request);
@@ -41,12 +41,26 @@ namespace Shape.WeatherForecast.Infrastructure.Shared.Services
 
 
             var parameters = new NameValueCollection { { "q", _request.City } };
+
             return await _openWeatherMapService.RequestAsync<ListOfTempFiveDaysResponse>("forecast", parameters, requestOptions); ;
         }
 
-        //public Task<Response<ListOfTempFiveDaysResponse>> GetUserFavoriteLocationsTemp(ListOfTempFiveDaysRequest _request)
-        //{
-        //    throw new NotImplementedException();
-        //}
+        public async Task<ListOfTempFiveDaysResponse> GetUserFavoriteLocationsTempAsync(IEnumerable<int> cityIds, RequestOptions requestOptions = default)
+        {
+            WeatherForecastValidator fiveDaysTempratureValidator = new WeatherForecastValidator();
+            //var result = fiveDaysTempratureValidator.Validate(cityIds);
+            //if (!result.IsValid)
+            //{
+            //    throw new CustomFluentValidationExceptions(result.Errors);
+            //}
+
+            requestOptions ??= RequestOptions.Default;
+            requestOptions.CancellationToken.ThrowIfCancellationRequested();
+
+
+            var parameters = new NameValueCollection { { "id", string.Join(",", cityIds) } };
+
+            return await _openWeatherMapService.RequestAsync<ListOfTempFiveDaysResponse>("group", parameters, requestOptions); ;
+        }
     }
 }

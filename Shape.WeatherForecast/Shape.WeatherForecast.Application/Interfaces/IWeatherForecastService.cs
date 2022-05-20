@@ -11,7 +11,7 @@ namespace Shape.WeatherForecast.Application.Interfaces
 {
     public interface IWeatherForecastService
     {
-        Task<ListOfTempFiveDaysResponse> GetListOfTemperaturesForCity(ListOfTempFiveDaysRequest _request, RequestOptions requestOptions = default);
-        //Task<Response<ListOfTempFiveDaysResponse>> GetUserFavoriteLocationsTemp(ListOfTempFiveDaysRequest _request);
+        Task<ListOfTempFiveDaysResponse> GetListOfTemperaturesForCityAsync(ListOfTempFiveDaysRequest _request, RequestOptions requestOptions = default);
+        Task<ListOfTempFiveDaysResponse> GetUserFavoriteLocationsTempAsync(IEnumerable<int> cityIds, RequestOptions requestOptions = default);
     }
 }
